@@ -1,10 +1,17 @@
 # PinguinRoadmap
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.1.2.
+It's a single page application which displays jira roadmap for the given user.
+
+### Jira roadmap (App Component) :
+This is the page with jira roadmap feature where,
+- jira epics are fetched from roadmap.service
+- Highcharts is used to display the roadmap using xrange charts
+- On epic hover, estimated duration along with the description is visible
+- User can drag and select (zoom-in) to see in detail about any jira
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `npm run start:proxy` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
