@@ -10,6 +10,8 @@ import Highstock from 'highcharts/modules/stock';
 import {Project} from "./data-model/project";
 import {RoadmapService} from "./service/roadmap.service";
 import {Subscription} from "rxjs";
+import {InfoPopupComponent} from "./info-popup/info-popup.component";
+import {MatDialog} from "@angular/material/dialog";
 
 HC_more(Highcharts);
 Boost(Highcharts);
@@ -33,7 +35,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private roadmapService: RoadmapService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    public dialog: MatDialog
   ) {
   }
 
@@ -95,6 +98,25 @@ export class AppComponent implements OnInit, OnDestroy {
     return seriesData;
   }
 
+  showPopupComponent(point:any){
+    let jiraPoint = {
+      issueType: point.issueType,
+      issueKey: point.issueKey,
+      description: point.description,
+      x: moment(point.x).format('DD MMM'),
+      x2: moment(point.x2).format('DD MMM')
+    }
+      const dialogRef = this.dialog.open(InfoPopupComponent, {
+        width: '250px',
+        data: {jiraPoint},
+        hasBackdrop: false
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed');
+      });
+  }
+
   initialiseChart() {
     // @ts-ignore
     this.chartOptions = {
@@ -105,7 +127,10 @@ export class AppComponent implements OnInit, OnDestroy {
       title: {
         text: ''
       },
-      tooltip: {
+      tooltip:{
+        enabled: false
+      },
+     /* tooltip: {
         headerFormat: '',
 
         pointFormatter: function () {
@@ -113,7 +138,7 @@ export class AppComponent implements OnInit, OnDestroy {
           const point: any = this;
           return `${point.issueType}: <b>${point.issueKey}</b><br>${moment(point.x).format('DD MMM')} - ${moment(point.x2).format('DD MMM')}<br>${point?.description ? point.description : ''}`;
         }
-      },
+      },*/
       // @ts-ignore
       xAxis: {
         type: 'datetime',
@@ -133,6 +158,14 @@ export class AppComponent implements OnInit, OnDestroy {
       },
       plotOptions: {
         xrange: {
+          point:{
+            events: {
+              click: (event) => {
+                this.dialog.closeAll();
+                return this.showPopupComponent(event['point']);
+              }
+            }
+          },
           dataLabels: {
             enabled: true,
             formatter: function () {
